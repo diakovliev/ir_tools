@@ -33,6 +33,9 @@ def main():
         if l.startswith(" -- "):
             continue
 
+        if l.strip() == "READY":
+            continue
+
         params = l.strip().split(',')
         print(repr(params))
 
