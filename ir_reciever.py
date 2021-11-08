@@ -25,28 +25,32 @@ def main():
     ser     = serial.Serial(args.device, Commons.SERIAL_SPEED, parity=serial.PARITY_NONE)
 
     while True:
-        l = ser.readline().decode(Commons.ENCODING).strip()
+        l = ser.readline().decode(Commons.ENCODING)
+        if not l.strip():
+            continue
+
+        print(">> %s" % l)
         if l.startswith(" -- "):
-            print("%s" % l)
-        else:
-            params = l.split(',')
-            print(repr(params))
+            continue
 
-            assert params[0] == "r"
-            protocol = int(params[1])
-            bits     = int(params[2])
-            address  = int(params[3])
-            value    = int(params[4])
+        params = l.strip().split(',')
+        print(repr(params))
 
-            keyname = keymap.translate(protocol, bits, address, value)
-            if keyname is not None:
-                print(" -- key '%s' { protocol: %d, bits: %d, address: %d, value: %d }" % (keyname, protocol, bits, address, value))
-                continue
+        assert params[0] == "r"
+        protocol = int(params[1])
+        bits     = int(params[2])
+        address  = int(params[3])
+        value    = int(params[4])
 
-            print(" -- unknown key { protocol: %d, bits: %d, address: %d, value: %d }" % (protocol, bits, address, value))
-            keyname = input("Enter key name: ")
+        keyname = keymap.translate(protocol, bits, address, value)
+        if keyname is not None:
+            print(" -- key '%s' { protocol: %d, bits: %d, address: %d, value: %d }" % (keyname, protocol, bits, address, value))
+            continue
 
-            keymap.register(keyname, protocol, bits, address, value)
+        print(" -- unknown key { protocol: %d, bits: %d, address: %d, value: %d }" % (protocol, bits, address, value))
+        keyname = input("Enter key name: ")
+
+        keymap.register(keyname, protocol, bits, address, value)
 
 
 

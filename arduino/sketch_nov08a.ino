@@ -40,8 +40,11 @@ void setup() {
 
   // Setup jumper
   pinMode(jumperPin, INPUT);
-  
-  //Serial.println(F("Ready to receive IR signals"));
+
+  // Read jumper state
+  readJumper();
+
+  Serial.println(F("READY"));
 }
 
 void recieverLoop() {

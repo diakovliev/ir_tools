@@ -35,26 +35,30 @@ def main():
 
     command_to_send = "%s\n" % Keymap.format(cmd)
 
-    ser.write(command_to_send.encode(Commons.ENCODING))
-
     while True:
         l = ser.readline().decode(Commons.ENCODING)
         if not l.strip():
             continue
+
+        print(">> %s" % l)
         if l.startswith(" -- "):
-            print("%s" % l)
-        else:
-            params = l.strip().split(',')
-            print(repr(params))
+            continue
 
-            assert params[0] == "t"
-            protocol = int(params[1])
-            bits     = int(params[2])
-            address  = int(params[3])
-            value    = int(params[4])
+        if l.strip() == "READY":
+            ser.write(command_to_send.encode(Commons.ENCODING))
+            continue
 
-            if cmd['protocol'] == protocol and cmd['bits'] == bits and cmd['address'] == address and cmd['value'] == value:
-                break
+        params = l.strip().split(',')
+        print(repr(params))
+
+        assert params[0] == "t"
+        protocol = int(params[1])
+        bits     = int(params[2])
+        address  = int(params[3])
+        value    = int(params[4])
+
+        if cmd['protocol'] == protocol and cmd['bits'] == bits and cmd['address'] == address and cmd['value'] == value:
+            break
 
 if __name__ == "__main__":
     main()
